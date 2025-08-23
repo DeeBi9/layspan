@@ -1,113 +1,98 @@
-import { Button } from "@/components/ui/button";
-import pirateShipImage from "@/assets/pirate-ship.png";
+import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 
 const Hero = () => {
   return (
-    <section className="ocean-gradient min-h-screen relative overflow-hidden">
-      {/* Background Pattern */}
-      <div 
-        className="absolute inset-0 opacity-30" 
-        style={{ backgroundImage: 'var(--wave-pattern)' }}
-      />
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/* Animated Background */}
+      <div className="absolute inset-0 bg-gradient-ocean">
+        <div className="absolute inset-0 bg-wave-pattern opacity-30"></div>
+      </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-        <div className="grid lg:grid-cols-2 gap-12 items-center min-h-screen py-20">
-          
-          {/* Left Content */}
-          <div className="fade-in-up">
-            <h1 className="text-5xl lg:text-6xl font-bold text-primary mb-6 leading-tight">
-              Extract Maritime Events from SoFs 
-              <span className="text-accent">in Seconds</span>
-            </h1>
-            
-            <p className="text-xl text-primary/80 mb-8 leading-relaxed">
-              AI-powered Laytime Intelligence Tool for fast, accurate, and structured 
-              event extraction.
-            </p>
+      {/* Maritime Decorations */}
+      <div className="maritime-decoration maritime-decoration-1">⚓</div>
+      <div className="maritime-decoration maritime-decoration-2">🌊</div>
+      <div className="maritime-decoration maritime-decoration-3">🧭</div>
+      <div className="maritime-decoration maritime-decoration-4">⛵</div>
 
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 mb-12">
-              <Button className="btn-ocean text-lg px-8 py-4">
-                Start Extracting
-              </Button>
-              <Button variant="outline" className="text-lg px-8 py-4 border-primary text-primary hover:bg-primary hover:text-primary-foreground">
-                View Demo
-              </Button>
-            </div>
+      {/* Content */}
+      <div className="relative z-10 text-center px-4 max-w-6xl mx-auto">
+        <motion.h1 
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="text-5xl md:text-7xl font-bold text-white mb-6"
+        >
+          {"SoF Event Extractor".split(" ").map((word, index) => (
+            <motion.span
+              key={index}
+              initial={{ opacity: 0, filter: "blur(4px)", y: 10 }}
+              animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
+              transition={{
+                duration: 0.3,
+                delay: index * 0.2,
+                ease: "easeInOut",
+              }}
+              className="mr-4 inline-block"
+            >
+              {word}
+            </motion.span>
+          ))}
+        </motion.h1>
+        
+        <motion.p 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.8 }}
+          className="text-xl md:text-2xl text-blue-100 mb-8"
+        >
+          AI-Powered Maritime Document Processing
+        </motion.p>
+        
+        <motion.p 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 1 }}
+          className="text-lg text-blue-200 mb-12 max-w-3xl mx-auto"
+        >
+          Extract events, timestamps, and operations from Statement of Facts documents 
+          in any format. Our intelligent system handles PDFs and Word docs with precision.
+        </motion.p>
+        
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 1.2 }}
+          className="flex flex-col md:flex-row gap-4 justify-center items-center"
+        >
+          <Link to="/upload">
+            <motion.button 
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="btn-maritime-primary px-8 py-4 text-lg font-semibold"
+            >
+              Start Processing
+            </motion.button>
+          </Link>
+          <motion.a 
+            href=""
+            target="_blank"
+            rel="noopener noreferrer"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <button className="btn-maritime-secondary px-8 py-4 text-lg font-semibold">
+              View Demo
+            </button>
+          </motion.a>
+        </motion.div>
+      </div>
 
-            {/* Process Flow */}
-            <div className="flex items-center gap-6 text-primary/70">
-              <div className="flex items-center gap-2">
-                <div className="w-12 h-12 bg-card rounded-xl flex items-center justify-center shadow-lg">
-                  📄
-                </div>
-                <span className="text-sm font-medium">Upload SoF</span>
-              </div>
-              <div className="text-2xl">→</div>
-              <div className="flex items-center gap-2">
-                <div className="w-12 h-12 bg-card rounded-xl flex items-center justify-center shadow-lg">
-                  🤖
-                </div>
-                <span className="text-sm font-medium">AI Processing</span>
-              </div>
-              <div className="text-2xl">→</div>
-              <div className="flex items-center gap-2">
-                <div className="w-12 h-12 bg-card rounded-xl flex items-center justify-center shadow-lg">
-                  📊
-                </div>
-                <span className="text-sm font-medium">Structured Data</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Right Content - Pirate Ship */}
-          <div className="flex justify-center items-center relative h-96 w-full lg:h-full">
-            {/* Ship Patrol Area */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              {/* Moving Pirate Ship */}
-              <div className="animate-mascot-patrol">
-                <img 
-                  src={pirateShipImage} 
-                  alt="Maritime pirate ship sailing the waters" 
-                  className="w-48 h-48 lg:w-56 lg:h-56 object-contain drop-shadow-2xl hover:scale-110 transition-transform duration-300 cursor-pointer"
-                />
-              </div>
-            </div>
-
-            {/* Static Decorative Elements */}
-            <div className="absolute top-10 right-10 wave-animation opacity-40">
-              <div className="text-4xl lg:text-5xl">⚓</div>
-            </div>
-            
-            <div className="absolute bottom-10 left-10 wave-animation opacity-50" style={{ animationDelay: '2s' }}>
-              <div className="text-3xl lg:text-4xl">🧭</div>
-            </div>
-
-            <div className="absolute top-20 left-5 wave-animation opacity-30" style={{ animationDelay: '4s' }}>
-              <div className="text-2xl lg:text-3xl">🌊</div>
-            </div>
-
-            <div className="absolute bottom-20 right-5 float-animation opacity-40" style={{ animationDelay: '3s' }}>
-              <div className="text-2xl lg:text-3xl">🏴‍☠️</div>
-            </div>
-
-            {/* Ship Wake Trail Effect */}
-            <div className="absolute inset-0 pointer-events-none">
-              <div 
-                className="w-3 h-1 bg-accent/40 rounded-full animate-mascot-patrol opacity-60" 
-                style={{ animationDelay: '0.3s' }}
-              />
-              <div 
-                className="w-2 h-1 bg-primary/30 rounded-full animate-mascot-patrol opacity-40" 
-                style={{ animationDelay: '0.6s' }}
-              />
-              <div 
-                className="w-1 h-1 bg-accent/20 rounded-full animate-mascot-patrol opacity-20" 
-                style={{ animationDelay: '0.9s' }}
-              />
-            </div>
-          </div>
-        </div>
+      {/* Floating Elements */}
+      <div className="floating-elements">
+        <div className="floating-element floating-element-1">📄</div>
+        <div className="floating-element floating-element-2">⏱️</div>
+        <div className="floating-element floating-element-3">📊</div>
       </div>
     </section>
   );

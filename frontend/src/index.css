@@ -2,54 +2,46 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
-
 @layer base {
   :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    
     /* Maritime Theme Colors */
-    --background: 195 100% 95%;
-    --foreground: 213 50% 15%;
+    --maritime-primary: 210 85% 45%;
+    --maritime-secondary: 195 100% 35%;
+    --maritime-accent: 220 100% 60%;
+    --maritime-dark: 210 40% 25%;
+    --maritime-light: 210 40% 95%;
+    --maritime-muted: 210 20% 60%;
+    --maritime-border: 210 30% 85%;
 
     --card: 0 0% 100%;
-    --card-foreground: 213 50% 15%;
+    --card-foreground: 222.2 84% 4.9%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 213 50% 15%;
+    --popover-foreground: 222.2 84% 4.9%;
 
-    /* Ocean Blue Primary */
-    --primary: 213 85% 35%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
 
-    /* Light Ocean Secondary */
-    --secondary: 195 60% 85%;
-    --secondary-foreground: 213 50% 15%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
 
-    /* Deep Ocean */
-    --muted: 213 30% 90%;
-    --muted-foreground: 213 25% 45%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
 
-    /* Maritime Accent */
-    --accent: 200 100% 75%;
-    --accent-foreground: 213 50% 15%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    /* Soft Borders */
-    --border: 213 20% 85%;
-    --input: 213 20% 85%;
-    --ring: 213 85% 35%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
 
-    --radius: 0.75rem;
-
-    /* Custom Maritime Variables */
-    --ocean-gradient: linear-gradient(135deg, hsl(195 100% 85%), hsl(213 85% 65%));
-    --wave-pattern: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-    --shadow-ocean: 0 10px 40px -10px hsl(213 85% 35% / 0.3);
-    --shadow-float: 0 20px 60px -20px hsl(213 85% 35% / 0.4);
-    --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
 
@@ -115,51 +107,133 @@ All colors MUST be HSL.
   body {
     @apply bg-background text-foreground;
   }
-
-  /* Maritime Animation Classes */
-  .float-animation {
-    animation: float 3s ease-in-out infinite;
-  }
-
-  .wave-animation {
-    animation: wave 4s ease-in-out infinite;
-  }
-
-  .fade-in-up {
-    animation: fadeInUp 0.8s ease-out forwards;
-  }
-
-  .scale-on-hover {
-    transition: var(--transition-smooth);
-  }
-
-  .scale-on-hover:hover {
-    transform: scale(1.05);
-  }
-
-  /* Custom Gradients */
-  .ocean-gradient {
-    background: var(--ocean-gradient);
-  }
-
-  .glass-effect {
-    backdrop-filter: blur(20px);
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-  }
 }
 
+/* Maritime Design System */
 @layer components {
-  /* Maritime Button Variants */
-  .btn-ocean {
-    @apply bg-primary text-primary-foreground px-6 py-3 rounded-xl font-medium;
-    @apply hover:bg-primary/90 active:scale-95 transition-all duration-300;
-    @apply shadow-[var(--shadow-ocean)];
+  .bg-gradient-ocean {
+    background: linear-gradient(135deg, 
+      hsl(var(--maritime-primary)) 0%,
+      hsl(var(--maritime-secondary)) 50%,
+      hsl(var(--maritime-accent)) 100%);
   }
+  
+  .bg-gradient-maritime {
+    background: linear-gradient(135deg, 
+      hsl(var(--maritime-primary)), 
+      hsl(var(--maritime-secondary)));
+  }
+  
+  .btn-maritime-primary {
+    @apply bg-gradient-maritime text-white px-6 py-3 rounded-lg font-semibold hover:scale-105 hover:shadow-lg transition-all duration-300;
+  }
+  
+  .btn-maritime-secondary {
+    @apply bg-white/20 text-white border border-white/30 px-6 py-3 rounded-lg font-semibold hover:bg-white/30 transition-all duration-300;
+  }
+  
+  .btn-maritime-outline {
+    @apply border-2 border-maritime-primary text-maritime-primary px-6 py-3 rounded-lg font-semibold hover:bg-maritime-primary hover:text-white transition-all duration-300;
+  }
+  
+  .text-maritime-primary { color: hsl(var(--maritime-primary)); }
+  .text-maritime-secondary { color: hsl(var(--maritime-secondary)); }
+  .text-maritime-dark { color: hsl(var(--maritime-dark)); }
+  .text-maritime-muted { color: hsl(var(--maritime-muted)); }
+  .bg-maritime-light { background-color: hsl(var(--maritime-light)); }
+  .border-maritime-border { border-color: hsl(var(--maritime-border)); }
+  .shadow-maritime { box-shadow: 0 10px 30px -10px hsl(var(--maritime-primary) / 0.3); }
+}
 
-  .btn-wave {
-    @apply bg-accent text-accent-foreground px-6 py-3 rounded-xl font-medium;
-    @apply hover:bg-accent/90 active:scale-95 transition-all duration-300;
-    @apply border border-accent/20;
+/* Maritime Animations */
+@layer utilities {
+  .ship-patrol {
+    position: absolute;
+    animation: shipPatrol 12s ease-in-out infinite;
+    z-index: 5;
+  }
+  
+  @keyframes shipPatrol {
+    0% { 
+      transform: translate(0px, 0px) rotate(0deg);
+      left: 50%; top: 50%; 
+    }
+    25% { 
+      transform: translate(200px, -100px) rotate(15deg);
+      left: 50%; top: 50%; 
+    }
+    50% { 
+      transform: translate(300px, 0px) rotate(0deg);
+      left: 50%; top: 50%; 
+    }
+    75% { 
+      transform: translate(200px, 100px) rotate(-15deg);
+      left: 50%; top: 50%; 
+    }
+    100% { 
+      transform: translate(0px, 0px) rotate(0deg);
+      left: 50%; top: 50%; 
+    }
+  }
+  
+  .maritime-decoration {
+    position: absolute;
+    font-size: 2rem;
+    opacity: 0.6;
+    animation: float 6s ease-in-out infinite;
+  }
+  
+  .maritime-decoration-1 { top: 20%; left: 15%; animation-delay: 0s; }
+  .maritime-decoration-2 { top: 80%; right: 20%; animation-delay: 1s; }
+  .maritime-decoration-3 { top: 30%; right: 15%; animation-delay: 2s; }
+  .maritime-decoration-4 { top: 70%; left: 20%; animation-delay: 3s; }
+  
+  @keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(5deg); }
+  }
+  
+  .floating-elements {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  
+  .floating-element {
+    position: absolute;
+    font-size: 1.5rem;
+    opacity: 0.4;
+    animation: floatSlow 8s ease-in-out infinite;
+  }
+  
+  .floating-element-1 { top: 15%; left: 80%; animation-delay: 0s; }
+  .floating-element-2 { top: 60%; left: 10%; animation-delay: 2s; }
+  .floating-element-3 { top: 85%; left: 75%; animation-delay: 4s; }
+  
+  @keyframes floatSlow {
+    0%, 100% { transform: translateY(0px) scale(1); }
+    50% { transform: translateY(-30px) scale(1.1); }
+  }
+  
+  .bg-wave-pattern {
+    background-image: 
+      radial-gradient(circle at 20% 80%, rgba(255,255,255,0.1) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1) 0%, transparent 50%);
+  }
+  
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .animate-fade-in {
+    animation: fade-in 0.8s ease-out forwards;
+    opacity: 0;
   }
 }
