@@ -46,7 +46,7 @@ const Hero = () => {
           transition={{ duration: 0.6, delay: 0.8 }}
           className="text-xl md:text-2xl text-blue-100 mb-8"
         >
-          AI-Powered Maritime Document Processing
+          Maritime Document Processing
         </motion.p>
         
         <motion.p 
