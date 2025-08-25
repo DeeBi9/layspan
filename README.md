@@ -11,7 +11,9 @@ This project automates extraction of port operation events from Statement of Fac
 ![Architecture](./architecture.png)
 
 ### Demo Video
+`Click to open`👇
 
+[![Watch the video](./demo.jpg)](https://drive.google.com/file/d/1siKhTK3HqczmSbT2460R6xAyiDCW3Juk/view?usp=sharing)
 
 ### Steps to upload document 
 1. On the front page click `Start Processsing`
@@ -20,7 +22,7 @@ This project automates extraction of port operation events from Statement of Fac
 2. Choose file to upload your document
 ![s2](./s2.png)
 
-3. Download the result in csv or json format
+3. Download the result in `csv` or `json` format
 ![s3](./s3.png)
 
 ### Features 
