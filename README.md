@@ -15,6 +15,11 @@ This project automates extraction of port operation events from Statement of Fac
 
 [![Watch the video](./demo.jpg)](https://drive.google.com/file/d/1siKhTK3HqczmSbT2460R6xAyiDCW3Juk/view?usp=sharing)
 
+### Live URL
+**NOTE** : Since the project, is currently in the development and demo phase. We have successfully deployed the frontend to Vercel to provide a live, accessible user interface. 
+
+**LINK** : [Click here](https://layspan-eight.vercel.app/)
+
 ### Steps to upload document 
 1. On the front page click `Start Processsing`
 ![s1](./s1.png)
