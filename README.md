@@ -2,6 +2,8 @@
 
 This project automates extraction of port operation events from Statement of Facts (SoF) documents and calculates laytime, demurrage, and dispatch charges. It supports PDF and Word formats, with OCR fallback for scanned docs.
 
+**NOTE** : Currently, the code is optimized for text-based scanning and only recognizes a few specific keywords, such as 'arrival' and 'loading'. Additionally, the CI/CD, Kubernetes, and database components are not yet set up. The complete, end-to-end software will be fully developed during the event. Thank you.
+
 ## Table of content 
 
 ### Architecture 
@@ -10,6 +12,16 @@ This project automates extraction of port operation events from Statement of Fac
 
 ### Demo Video
 
+
+### Steps to upload document 
+1. On the front page click `Start Processsing`
+![s1](./s1.png)
+
+2. Choose file to upload your document
+![s2](./s2.png)
+
+3. Download the result in csv or json format
+![s3](./s3.png)
 
 ### Features 
 
@@ -165,30 +177,6 @@ Deploy in Kubernetes using a Deployment + Service YAML.
 
 ---
 
-### 8. Kubernetes Deployment
-- Create Kubernetes manifests (`/k8s/`) for:
-  - Frontend (React build with Nginx)  
-  - Backend (Laravel API + worker)  
-  - PostgreSQL  
-  - Redis  
-  - Python ML Service (FastAPI)  
-
-Apply them:
-```bash
-kubectl apply -f k8s/
-```
-
----
-
-### 9. CI/CD (GitHub Actions → Kubernetes)
-- Code pushed to GitHub → GitHub Actions builds Docker images and pushes to registry.  
-- GitHub Actions then deploys updated services to Kubernetes via `kubectl` or `helm upgrade`.  
-
----
-
-### 10. Access the App
-- **Ingress / LoadBalancer** service exposes the frontend.  
-- Users upload documents → API → Redis Queue → Python ML Service → PostgreSQL → Results downloadable (JSON/CSV).  
 
 ## Team
 
