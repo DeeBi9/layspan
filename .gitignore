@@ -2,3 +2,4 @@
 /ml-service/__pycache__
 /ml-service/myenv
 /ml-service/.pytest_cache
+/ml-service/test_early_main
