@@ -5,11 +5,22 @@ import { Button } from "../components/ui/button";
 import { ArrowLeft, Upload as UploadIcon, FileText, Download, X } from "lucide-react";
 import { Link } from "react-router-dom";
 
-const Upload = () => {
+type MlEvent = {
+  event: string;
+  details?: string[]; // FastAPI returns array of entity strings
+};
+
+type MlResult = {
+  filename: string;
+  preview: string;
+  events: MlEvent[];
+};
+
+const Upload: React.FC = () => {
   const [dragActive, setDragActive] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const [processing, setProcessing] = useState(false);
-  const [results, setResults] = useState<any[]>([]);
+  const [results, setResults] = useState<MlResult[]>([]);
 
   // Drag Events
   const handleDrag = (e: React.DragEvent) => {
@@ -23,7 +34,6 @@ const Upload = () => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       handleFiles(Array.from(e.dataTransfer.files));
     }
@@ -31,54 +41,56 @@ const Upload = () => {
 
   // File Validation
   const handleFiles = (fileList: File[]) => {
-    const validFiles = fileList.filter(file =>
-      ["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"].includes(file.type)
+    const validFiles = fileList.filter((file) =>
+      ["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "text/plain"].includes(
+        file.type || ""
+      )
     );
-    setFiles(prev => [...prev, ...validFiles]);
+    setFiles((prev) => [...prev, ...validFiles]);
   };
 
-  // Simulated AI Processing
-  const processFiles = () => {
+  // 🔥 Backend Processing
+  const processFiles = async () => {
     setProcessing(true);
-    setTimeout(() => {
-      setProcessing(false);
-      setResults([
-        {
-          event: "Cargo Loading",
-          startTime: "2024-08-20 08:00",
-          endTime: "2024-08-20 16:30",
-          duration: "8h 30m",
-          currency: "USD",
-        },
-        {
-          event: "Anchorage",
-          startTime: "2024-08-20 17:00",
-          endTime: "2024-08-21 06:00",
-          duration: "13h 00m",
-          currency: "USD",
-        },
-        {
-          event: "Cargo Discharge",
-          startTime: "2024-08-21 06:30",
-          endTime: "2024-08-21 14:45",
-          duration: "8h 15m",
-          currency: "USD",
-        },
-      ]);
-    }, 4000);
+    const formData = new FormData();
+    files.forEach(file => formData.append("files", file));
+    console.log("Sending files:", files.map(f => f.name));
+    try {
+        const res = await fetch("http://127.0.0.1:8000/api/upload", {
+            method: "POST",
+            body: formData,
+        });
+        if (!res.ok) {
+            console.error("HTTP error:", res.status, await res.text());
+            throw new Error(`HTTP error: ${res.status}`);
+        }
+        const data = await res.json();
+        console.log("Backend response:", data);
+        setResults(data.results || []);
+    } catch (err) {
+        console.error("Processing failed:", err);
+    } finally {
+        setProcessing(false);
+    }
   };
 
-  // Download JSON / CSV
+  // Download JSON / CSV of whatever ML returned
   const downloadResults = (format: "json" | "csv") => {
-    let data: string;
+    if (!results.length) return;
 
+    let data: string;
     if (format === "json") {
       data = JSON.stringify(results, null, 2);
     } else {
-      // Add headers
-      const headers = Object.keys(results[0]).join(",");
-      const rows = results.map(r => Object.values(r).join(","));
-      data = [headers, ...rows].join("\n");
+      // CSV: one row per (file,event)
+      const rows: string[] = [];
+      rows.push(["filename", "event", "details"].join(","));
+      results.forEach((r) => {
+        (r.events || []).forEach((ev) => {
+          rows.push([r.filename, ev.event, (ev.details || []).join(" | ")].map((v) => `"${(v || "").replace(/"/g, '""')}"`).join(","));
+        });
+      });
+      data = rows.join("\n");
     }
 
     const blob = new Blob([data], { type: format === "json" ? "application/json" : "text/csv" });
@@ -95,10 +107,7 @@ const Upload = () => {
       {/* Header */}
       <div className="bg-white/90 backdrop-blur-md border-b border-maritime-border">
         <div className="max-w-7xl mx-auto px-4 py-4">
-          <Link
-            to="/"
-            className="inline-flex items-center space-x-2 text-maritime-dark hover:text-maritime-primary transition-colors"
-          >
+          <Link to="/" className="inline-flex items-center space-x-2 text-maritime-dark hover:text-maritime-primary transition-colors">
             <ArrowLeft className="w-5 h-5" />
             <span>Back to Home</span>
           </Link>
@@ -111,8 +120,7 @@ const Upload = () => {
           <div className="text-center mb-12">
             <h1 className="text-5xl font-bold text-white mb-4">Upload Your SoF Documents</h1>
             <p className="text-xl text-blue-100 max-w-3xl mx-auto">
-              Upload your Statement of Facts documents and let our AI extract all events, timestamps, and calculations
-              automatically
+              Upload your Statement of Facts documents and let our AI extract all events, timestamps, and calculations automatically
             </p>
           </div>
 
@@ -143,10 +151,10 @@ const Upload = () => {
                   <input
                     type="file"
                     multiple
-                    accept=".pdf,.doc,.docx"
+                    accept=".pdf,.doc,.docx,.txt"
                     id="file-upload"
                     className="hidden"
-                    onChange={e => {
+                    onChange={(e) => {
                       if (e.target.files) handleFiles(Array.from(e.target.files));
                     }}
                   />
@@ -181,10 +189,7 @@ const Upload = () => {
                           <p className="text-sm text-maritime-muted">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
                         </div>
                       </div>
-                      <button
-                        onClick={() => setFiles(files.filter((_, i) => i !== index))}
-                        className="p-2 text-red-500 hover:bg-red-100 rounded-lg"
-                      >
+                      <button onClick={() => setFiles(files.filter((_, i) => i !== index))} className="p-2 text-red-500 hover:bg-red-100 rounded-lg">
                         <X className="w-5 h-5" />
                       </button>
                     </motion.div>
@@ -195,23 +200,21 @@ const Upload = () => {
           )}
 
           {/* Process Button */}
-          {files.length > 0 && !results.length && (
+          {files.length > 0 && !processing && results.length === 0 && (
             <div className="text-center mb-8">
-              <Button onClick={processFiles} disabled={processing} className="btn-maritime-primary px-12 py-4 text-lg">
-                {processing ? (
-                  <>
-                    <motion.div
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                      className="mr-2 inline-block"
-                    >
-                      ⚙️
-                    </motion.div>
-                    Processing Documents...
-                  </>
-                ) : (
-                  "Start AI Processing"
-                )}
+              <Button onClick={processFiles} className="btn-maritime-primary px-12 py-4 text-lg">
+                Start AI Processing
+              </Button>
+            </div>
+          )}
+
+          {processing && (
+            <div className="text-center mb-8">
+              <Button disabled className="btn-maritime-primary px-12 py-4 text-lg">
+                <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }} className="mr-2 inline-block">
+                  ⚙️
+                </motion.div>
+                Processing Documents...
               </Button>
             </div>
           )}
@@ -233,35 +236,57 @@ const Upload = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="overflow-x-auto">
-                  <table className="w-full border-collapse">
-                    <thead>
-                      <tr className="border-b">
-                        <th className="text-left py-3 px-4">Event</th>
-                        <th className="text-left py-3 px-4">Start Time</th>
-                        <th className="text-left py-3 px-4">End Time</th>
-                        <th className="text-left py-3 px-4">Duration</th>
-                        <th className="text-left py-3 px-4">Currency</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {results.map((result, index) => (
-                        <motion.tr
-                          key={result.event + index}
-                          initial={{ opacity: 0, x: -20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: index * 0.1 }}
-                          className="border-b hover:bg-maritime-light/30"
-                        >
-                          <td className="py-3 px-4 font-medium">{result.event}</td>
-                          <td className="py-3 px-4">{result.startTime}</td>
-                          <td className="py-3 px-4">{result.endTime}</td>
-                          <td className="py-3 px-4">{result.duration}</td>
-                          <td className="py-3 px-4">{result.currency}</td>
-                        </motion.tr>
-                      ))}
-                    </tbody>
-                  </table>
+                {/* Per-file result card */}
+                <div className="space-y-8">
+                  {results.map((r, i) => (
+                    <motion.div key={r.filename + i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
+                      <div className="mb-2">
+                        <p className="text-sm text-maritime-muted">Filename</p>
+                        <p className="font-medium text-maritime-dark">{r.filename}</p>
+                      </div>
+
+                      {/* Preview */}
+                      {r.preview && (
+                        <div className="mb-4 p-4 bg-maritime-light rounded-lg">
+                          <p className="text-sm text-maritime-muted mb-1">Preview</p>
+                          <p className="text-maritime-dark whitespace-pre-wrap">{r.preview}</p>
+                        </div>
+                      )}
+
+                      {/* Events table */}
+                      <div className="overflow-x-auto">
+                        <table className="w-full border-collapse">
+                          <thead>
+                            <tr className="border-b">
+                              <th className="text-left py-3 px-4">Event</th>
+                              <th className="text-left py-3 px-4">Details (Entities)</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {(r.events || []).map((ev, idx) => (
+                              <motion.tr
+                                key={ev.event + idx}
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: idx * 0.05 }}
+                                className="border-b hover:bg-maritime-light/30"
+                              >
+                                <td className="py-3 px-4 font-medium">{ev.event}</td>
+                                <td className="py-3 px-4">{(ev.details || []).join(", ")}</td>
+                              </motion.tr>
+                            ))}
+                            {(!r.events || r.events.length === 0) && (
+                              <tr>
+                                <td className="py-3 px-4 text-maritime-muted" colSpan={2}>
+                                  No events detected.
+                                </td>
+                              </tr>
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
+                    </motion.div>
+                  ))}
                 </div>
               </CardContent>
             </Card>
